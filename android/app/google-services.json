@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "564267484094",
+    "project_id": "todo-a-remainders",
+    "storage_bucket": "todo-a-remainders.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564267484094:android:af1d329fa678bfff5c2fef",
+        "android_client_info": {
+          "package_name": "com.example.todos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMzLYm5kIXG2Z5lVMZLzWSs92sysichsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
