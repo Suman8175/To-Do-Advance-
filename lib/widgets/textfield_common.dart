@@ -8,16 +8,19 @@ class TextFiller extends StatefulWidget {
   final String? value;
   final TextInputAction keyboardAction;
   final IconData iconToShow;
+  final int? min;
+  final int? max;
 
-  const TextFiller({
-    super.key,
-    required this.newController,
-    required this.textFieldTitle,
-    required this.obsecure,
-    required this.value,
-    this.keyboardAction = TextInputAction.next,
-    required this.iconToShow,
-  });
+  const TextFiller(
+      {super.key,
+      required this.newController,
+      required this.textFieldTitle,
+      required this.obsecure,
+      required this.value,
+      this.keyboardAction = TextInputAction.next,
+      required this.iconToShow,
+      this.min,
+      this.max});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -47,6 +50,8 @@ class _TextFillerState extends State<TextFiller> {
         return null;
       },
       obscureText: widget.obsecure,
+      minLines: widget.min ?? 1,
+      maxLines: widget.max ?? 1,
       textInputAction: widget.keyboardAction,
       style: const TextStyle(color: Colors.black),
       textAlign: TextAlign.center,

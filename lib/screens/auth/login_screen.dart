@@ -192,25 +192,28 @@ class _LoginPageState extends State<LoginPage> {
                             return const SignUpPage();
                           }));
                         },
-                        child: Container(
-                          height: 48,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            // color: Colors.white,
-                            gradient: const LinearGradient(colors: [
-                              Color.fromARGB(255, 68, 122, 68),
-                              Color.fromARGB(255, 156, 240, 156),
-                            ]),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Center(
+                        child: Center(
+                          child: Container(
+                            height: 48,
+                            width: MediaQuery.of(context).size.width * 0.65,
+                            decoration: BoxDecoration(
+                              // color: Colors.white,
+                              gradient: const LinearGradient(colors: [
+                                Color.fromARGB(255, 68, 122, 68),
+                                Color.fromARGB(255, 156, 240, 156),
+                              ]),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Center(
                               child: Text(
-                            'Create account',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.greyColor),
-                          )),
+                                'Create account',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.greyColor),
+                              ),
+                            ),
+                          ),
                         ),
                       )
                     ],

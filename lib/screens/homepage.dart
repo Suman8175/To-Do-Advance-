@@ -1,9 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todos/common/messageshowinpopup.dart';
 import 'package:todos/config/themes/apptheme.dart';
+import 'package:todos/constants/appconstants.dart';
+import 'package:todos/models/taskmodel.dart';
+import 'package:todos/providers/todo_provider.dart';
+import 'package:todos/providers/xpansion_provider.dart';
 import 'package:todos/screens/auth/login_screen.dart';
+import 'package:todos/screens/tasks/add_task_screen.dart';
+import 'package:todos/screens/tasks/update_task_screen.dart';
 import 'package:todos/screens/todo/todo_tile.dart';
+import 'package:todos/utils/completed.dart';
+import 'package:todos/utils/futuretasks.dart';
+import 'package:todos/utils/tomorrowlist.dart';
 import 'package:todos/widgets/expansion_tile.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -26,6 +36,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(toDoStateProvider.notifier).refresh();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -155,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       height: 5,
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.3,
+                      height: MediaQuery.of(context).size.height * 0.4,
                       width: double.infinity,
                       child: ClipRRect(
                         borderRadius: const BorderRadius.all(
@@ -165,40 +176,14 @@ class _HomePageState extends ConsumerState<HomePage>
                           controller: tabController,
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.4,
                               color: AppTheme.greenColor,
-                              child: ListView(
-                                children: [
-                                  ToDoTile(
-                                    start: '03:00',
-                                    end: '06:00',
-                                    switcher: Switch(
-                                        value: true, onChanged: (value) {}),
-                                  ),
-                                  ToDoTile(
-                                    start: '03:00',
-                                    end: '06:00',
-                                    switcher: Switch(
-                                        value: true, onChanged: (value) {}),
-                                  ),
-                                  ToDoTile(
-                                    start: '03:00',
-                                    end: '06:00',
-                                    switcher: Switch(
-                                        value: false, onChanged: (value) {}),
-                                  ),
-                                  ToDoTile(
-                                    start: '03:00',
-                                    end: '06:00',
-                                    switcher: Switch(
-                                        value: true, onChanged: (value) {}),
-                                  ),
-                                ],
-                              ),
+                              child: const TodayTask(),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.3,
-                              color: Colors.pink,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              color: const Color.fromARGB(238, 213, 206, 206),
+                              child: const CompletedTask(),
                             )
                           ],
                         ),
@@ -207,18 +192,34 @@ class _HomePageState extends ConsumerState<HomePage>
                     const SizedBox(
                       height: 5,
                     ),
-                    const XpansionTile(
-                      text1: 'Tomorrow\'s Task',
-                      text2: 'Nice',
-                      children: [Text('Data1'), Text('Data2')],
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.view_list_outlined,
+                          size: 32,
+                          color: AppTheme.greenColor,
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Text(
+                          'Upcomming Tasks:',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 5,
                     ),
-                    const XpansionTile(
-                      text1: 'UpComing Task',
-                      text2: 'Nice OKK',
-                      children: [Text('Data1'), Text('Data2')],
+                    //dawdwdadwadaaaaaaaaaaaaaaaaaaa
+                    const TomorrowList(),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const FutureList(),
+                    const SizedBox(
+                      height: 85,
                     )
                   ],
                 ),
@@ -228,7 +229,10 @@ class _HomePageState extends ConsumerState<HomePage>
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppTheme.greenColor,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push((context),
+                MaterialPageRoute(builder: (context) => const AddTask()));
+          },
           child: const Icon(Icons.add),
         ),
       ),
@@ -268,5 +272,73 @@ class _HomePageState extends ConsumerState<HomePage>
         );
       }),
     );
+  }
+}
+
+class TodayTask extends ConsumerWidget {
+  const TodayTask({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<TaskModel> listData = ref.watch(toDoStateProvider);
+    String today = ref.watch(toDoStateProvider.notifier).todayDate();
+    var todayList = listData
+        .where((element) =>
+            element.isCompleted == 0 && element.date!.contains(today))
+        .toList();
+
+    return ListView.builder(
+        itemCount: todayList.length,
+        itemBuilder: ((context, index) {
+          final data = todayList[index];
+          bool isCompleted =
+              ref.read(toDoStateProvider.notifier).getStatus(data);
+          return ToDoTile(
+            delete: () {
+              Message(
+                buttontext: 'Delete',
+                title: 'Confirm Delete',
+                msg: 'Do you want to delete it?',
+                onTrue: () {
+                  ref.read(toDoStateProvider.notifier).deleteToDo(data.id ?? 0);
+                  Navigator.pop(context);
+                },
+              ).onPressed(context);
+            },
+            editWidget: GestureDetector(
+              onTap: () {
+                titles = data.title.toString();
+                descs = data.desc.toString();
+                Navigator.push(
+                    (context),
+                    MaterialPageRoute(
+                        builder: (context) => UpdateTask(id: data.id ?? 0)));
+              },
+              child: const Icon(
+                Icons.edit,
+                color: AppTheme.greenColor,
+              ),
+            ),
+            title: data.title,
+            desc: data.desc,
+            start: data.starttime,
+            end: data.endtime,
+            color: AppTheme.greyColor2,
+            switcher: Switch(
+                value: isCompleted,
+                onChanged: (value) {
+                  ref.read(toDoStateProvider.notifier).markAsDelete(
+                      data.id ?? 0,
+                      data.title.toString(),
+                      data.desc.toString(),
+                      1,
+                      data.date.toString(),
+                      data.starttime.toString(),
+                      data.endtime.toString());
+                }),
+          );
+        }));
   }
 }

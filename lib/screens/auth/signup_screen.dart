@@ -18,6 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController userSignInEmail = TextEditingController();
   TextEditingController userSignInPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
   //onClicked signIn or Create account Button
@@ -32,16 +33,26 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       );
       try {
-        await _auth.createUserWithEmailAndPassword(
-            email: userSignInEmail.text.toString(),
-            password: userSignInPassword.text.toString());
-        userSignInEmail.text = '';
-        userSignInPassword.text = '';
-        setState(() {
-          loading = false;
-        });
-        // ignore: use_build_context_synchronously
-        _dialogBuilder(context);
+        if (userSignInPassword == confirmPassword) {
+          await _auth.createUserWithEmailAndPassword(
+              email: userSignInEmail.text.toString(),
+              password: userSignInPassword.text.toString());
+          userSignInEmail.text = '';
+          userSignInPassword.text = '';
+          confirmPassword.text = '';
+          setState(() {
+            loading = false;
+          });
+          // ignore: use_build_context_synchronously
+          _dialogBuilder(context);
+        } else {
+          setState(() {
+            loading = false;
+          });
+          ExceptionShower().showmessage('Both passwords are different');
+          userSignInPassword.text = '';
+          confirmPassword.text = '';
+        }
       } on FirebaseAuthException catch (e) {
         ExceptionShower().showmessage(e.message!);
         setState(() {
@@ -150,6 +161,16 @@ class _SignUpPageState extends State<SignUpPage> {
                               newController: userSignInPassword,
                               textFieldTitle: 'Enter your password',
                               obsecure: true,
+                              iconToShow: Icons.lock_outline_rounded,
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            TextFiller(
+                              value: confirmPassword.text.toString(),
+                              newController: confirmPassword,
+                              textFieldTitle: 'Retype password',
+                              obsecure: true,
                               keyboardAction: TextInputAction.done,
                               iconToShow: Icons.lock_outline_rounded,
                             ),
@@ -210,25 +231,27 @@ class _SignUpPageState extends State<SignUpPage> {
                             return const LoginPage();
                           }));
                         },
-                        child: Container(
-                          height: 48,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            // color: Colors.white,
-                            gradient: const LinearGradient(colors: [
-                              Color.fromARGB(255, 68, 122, 68),
-                              Color.fromARGB(255, 156, 240, 156),
-                            ]),
-                            borderRadius: BorderRadius.circular(20),
+                        child: Center(
+                          child: Container(
+                            height: 48,
+                            width: MediaQuery.of(context).size.width * 0.65,
+                            decoration: BoxDecoration(
+                              // color: Colors.white,
+                              gradient: const LinearGradient(colors: [
+                                Color.fromARGB(255, 68, 122, 68),
+                                Color.fromARGB(255, 156, 240, 156),
+                              ]),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Center(
+                                child: Text(
+                              'Log In',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.greyColor),
+                            )),
                           ),
-                          child: const Center(
-                              child: Text(
-                            'Log In',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.greyColor),
-                          )),
                         ),
                       )
                     ],

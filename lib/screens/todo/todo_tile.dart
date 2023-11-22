@@ -60,7 +60,7 @@ class ToDoTile extends StatelessWidget {
                           Text(
                             title ?? 'Title',
                             style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 24,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -70,7 +70,7 @@ class ToDoTile extends StatelessWidget {
                           Text(
                             desc ?? 'Description',
                             style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 18,
                                 color: Colors.white,
                                 fontWeight: FontWeight.normal),
                           ),

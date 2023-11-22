@@ -43,6 +43,10 @@ dependencies:
   flex_color_scheme: ^7.3.1
   fluttertoast: ^8.2.3
   hooks_riverpod: ^2.4.6
+  riverpod_annotation: ^2.3.1
+  sqflite: ^2.3.0
+  flutter_datetime_picker_plus: ^2.1.0
+
   
 dev_dependencies:
   flutter_test:
@@ -54,6 +58,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.6
+  riverpod_generator: ^2.3.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
